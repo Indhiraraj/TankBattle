@@ -3,7 +3,7 @@ import random
 import sys
 
 # Game window dimensions
-WIDTH = 800
+WIDTH = 1100
 HEIGHT = 600
 
 # Colors
@@ -19,12 +19,14 @@ clock = pygame.time.Clock()
 # Load images
 background_image = pygame.image.load("images/background.jpg").convert()
 tank_image = pygame.image.load("images/tank.png").convert_alpha()
+tank_image2=pygame.image.load("images/tank2.png").convert_alpha()
 bullet_image = pygame.image.load("images/bullet.png").convert_alpha()
 enemy_image = pygame.image.load("images/enemy.png").convert_alpha()
 
 # Scale images to fit the game window
 background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
-tank_image = pygame.transform.scale(tank_image, (60, 60))
+tank_image = pygame.transform.scale(tank_image, (70, 70))
+tank_image2=pygame.transform.scale(tank_image2, (60,60))
 bullet_image = pygame.transform.scale(bullet_image, (50, 50))
 enemy_image = pygame.transform.scale(enemy_image, (60, 60))
 
@@ -46,6 +48,33 @@ class Tank(pygame.sprite.Sprite):
             self.rect.x -= self.speed
         if keys[pygame.K_RIGHT]:
             self.rect.x += self.speed
+        if health1==0:
+            self.kill()
+        self.rect.x = max(0, min(WIDTH - self.rect.width, self.rect.x))  # Keep tank within screen boundaries
+
+    def shoot(self):
+        bullet = Bullet(self.rect.centerx, self.rect.y)
+        all_sprites.add(bullet)
+        bullets.add(bullet)
+        bullet_sound.play()
+
+# tank2 class
+class Tank2(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = tank_image2
+        self.rect = self.image.get_rect()
+        self.rect.center = (WIDTH // 2, HEIGHT - 50)
+        self.speed = 5
+
+    def update(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_a]:
+            self.rect.x -= self.speed
+        if keys[pygame.K_d]:
+            self.rect.x += self.speed
+        if health2==0:
+            self.kill()
         self.rect.x = max(0, min(WIDTH - self.rect.width, self.rect.x))  # Keep tank within screen boundaries
 
     def shoot(self):
@@ -87,11 +116,30 @@ class Enemy(pygame.sprite.Sprite):
             decrease_health()
 
 def decrease_health():
-    global health
-    health -= 10
-    if health <= 0:
-        game_over()
+    global health1
+    global health2
+    health1 -= 3
+    health2 -= 3
+    is_game_over()
 
+def decrease_health1():
+    global health1
+    health1 -= 10
+    if health1 <= 0:
+        is_game_over()
+
+def decrease_health2():
+    global health2
+    health2 -= 10
+    if health2 <= 0:
+        is_game_over()
+
+def is_game_over():
+    global health1
+    global health2
+    if health1 <= 0 and health2 <=0:
+        game_over()
+      
 def game_over():
     global game_over_screen
     pygame.time.delay(1000)  # Delay for 1 second
@@ -109,24 +157,29 @@ def show_start_screen():
 
     title_text = title_font.render("Tank Battle Game", True, WHITE)
     start_text = text_font.render("Press ENTER to Start", True, WHITE)
-    controls_text = text_font.render("Controls: Left/Right Arrow Keys to Move, Space to Shoot", True, WHITE)
+    controls_text = text_font.render("Controls: Left/Right Arrow Keys to Move, Space/RightShift to Shoot for tank 1", True, WHITE)
+    controls_text1 = text_font.render("Controls: A/D Keys to Move, LeftShift to Shoot for tank 2", True, WHITE)
     quit_text = text_font.render("Press Q to Quit", True, WHITE)
 
-    title_rect = title_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100))
-    start_rect = start_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
-    controls_rect = controls_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 50))
-    quit_rect = quit_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 100))
+    title_rect = title_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 200))
+    start_rect = start_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100))
+    controls_rect = controls_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 ))
+    controls_rect1 = controls_text1.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 50))
+    quit_rect = quit_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 125))
 
     window.blit(title_text, title_rect)
     window.blit(start_text, start_rect)
     window.blit(controls_text, controls_rect)
+    window.blit(controls_text1, controls_rect1)
     window.blit(quit_text, quit_rect)
 
     pygame.display.flip()
 
 def draw_health_bar():
-    pygame.draw.rect(window, RED, (20, 20, health, 20))
+    pygame.draw.rect(window, RED, (20, 20, health1, 20))
     pygame.draw.rect(window, WHITE, (20, 20, 100, 20), 2)
+    pygame.draw.rect(window, RED, (20, 50, health2, 20))
+    pygame.draw.rect(window, WHITE, (20, 50, 100, 20), 2)
 
 
 
@@ -180,9 +233,13 @@ enemies = pygame.sprite.Group()
 player_tank = Tank()
 all_sprites.add(player_tank)
 
-# Game variables
-health = 100
+# Create player tank2
+player_tank2 = Tank2()
+all_sprites.add(player_tank2)
 
+# Game variables
+health2= 100
+health1=100
 score = 0
 level = 1
 enemy_spawn_rate = 0
@@ -217,7 +274,8 @@ while running:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     game_over_screen = False
-                    health = 100
+                    health2 = 100
+                    health1=100
                     score = 0
                     level = 1
                     enemy_spawn_rate = 0
@@ -227,6 +285,8 @@ while running:
                     enemies.empty()
                     player_tank = Tank()
                     all_sprites.add(player_tank)
+                    player_tank2 = Tank2()
+                    all_sprites.add(player_tank2)
                 if event.key == pygame.K_q:
                     running = False
 
@@ -239,7 +299,8 @@ while running:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     game_complete_screen = False
-                    health = 100
+                    health2 = 100
+                    health1=100
                     score = 0
                     level = 1
                     enemy_spawn_rate = 0
@@ -249,6 +310,8 @@ while running:
                     enemies.empty()
                     player_tank = Tank()
                     all_sprites.add(player_tank)
+                    player_tank2 = Tank2()
+                    all_sprites.add(player_tank2)
                 if event.key == pygame.K_q:
                     running = False
 
@@ -262,8 +325,10 @@ while running:
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_RSHIFT:
                     player_tank.shoot()
+                if event.key == pygame.K_LSHIFT:
+                    player_tank2.shoot()
                 if event.key == pygame.K_q:
                     running = False
 
@@ -273,18 +338,24 @@ while running:
         bullet_hits = pygame.sprite.groupcollide(bullets, enemies, True, True)
         for bullet in bullet_hits.keys():
             score += 10
-            if score >= 100*level and level<15:
+            if score >= 100*level and level<25:
                 level += 1
                 
                 enemy_spawn_rate += 1
                 enemy_speed += 0.3
-            if level==15:
+            if level==25:
                 game_complete()
 
         # Check for enemy collisions with player tank
         enemy_hits = pygame.sprite.spritecollide(player_tank, enemies, True)
         if enemy_hits:
-            decrease_health()
+            decrease_health1()
+
+        # Check for enemy collisions with player tank
+        enemy_hits1 = pygame.sprite.spritecollide(player_tank2, enemies, True)
+        if enemy_hits1:
+            decrease_health2()
+
 
         window.blit(background_image, (0, 0))
         all_sprites.draw(window)
