@@ -271,12 +271,12 @@ while running:
         bullet_hits = pygame.sprite.groupcollide(bullets, enemies, True, True)
         for bullet in bullet_hits.keys():
             score += 10
-            if score >= 100*level and level<11:
+            if score >= 100*level and level<25:
                 level += 1
                 
                 enemy_spawn_rate += 1
                 enemy_speed += 0.3
-            if level==10:
+            if level==25:
                 game_complete()
 
         # Check for enemy collisions with player tank
