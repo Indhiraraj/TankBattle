@@ -157,6 +157,7 @@ def show_start_screen():
     text_font = pygame.font.SysFont(None, 40)
 
     title_text = title_font.render("Tank Battle Game", True, WHITE)
+
     start_text = text_font.render("Press ENTER to Start", True, GREEN)
     controls_text0 = text_font.render("Controls", True, WHITE)
     controls_text = text_font.render("1st Player : Left/Right Arrow Keys to Move, Right Ctrl key to Shoot", True, WHITE)
