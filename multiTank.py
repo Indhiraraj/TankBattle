@@ -157,7 +157,7 @@ def show_start_screen():
 
     title_text = title_font.render("Tank Battle Game", True, WHITE)
     start_text = text_font.render("Press ENTER to Start", True, WHITE)
-    controls_text = text_font.render("Controls: Left/Right Arrow Keys to Move, RightControl to Shoot for tank 1", True, WHITE)
+    controls_text = text_font.render("Controls: Left/Right Arrow Keys to Move, Right Ctrl key to Shoot for tank 1", True, WHITE)
     controls_text1 = text_font.render("Controls: A/D Keys to Move, Space to Shoot for tank 2", True, WHITE)
     quit_text = text_font.render("Press Q to Quit", True, WHITE)
 
