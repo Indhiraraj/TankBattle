@@ -350,7 +350,7 @@ while running:
                 enemy_speed += 0.3
             if score >= 100*level and level >= 15 and level < 25:
                 level += 1
-                # enemy_spawn_rate +=1
+                enemy_spawn_rate +=1
                 enemy_speed += 0.5 
             if level==25:
                 game_complete()
