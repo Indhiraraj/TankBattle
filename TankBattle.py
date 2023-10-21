@@ -2,6 +2,9 @@ import pygame
 import random
 import sys
 
+#initialize pygame.mixer
+pygame.mixer.init()
+
 # Game window dimensions
 WIDTH = 800
 HEIGHT = 600
@@ -30,6 +33,12 @@ enemy_image = pygame.transform.scale(enemy_image, (60, 60))
 
 # Load sounds
 bullet_sound = pygame.mixer.Sound("music/bullet.mp3")
+background_music = "music/bgm.mp3"  # Replace with the path to your background music file
+pygame.mixer.music.load(background_music)
+
+pygame.mixer.music.play(-1)  # -1 means to play the music indefinitely
+
+
 
 # Tank class
 class Tank(pygame.sprite.Sprite):
