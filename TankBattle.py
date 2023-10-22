@@ -33,10 +33,9 @@ enemy_image = pygame.transform.scale(enemy_image, (60, 60))
 
 # Load sounds
 bullet_sound = pygame.mixer.Sound("music/bullet.mp3")
-background_music = "music/bgm.mp3"  # Replace with the path to your background music file
-pygame.mixer.music.load(background_music)
+game_background_music = pygame.mixer.Sound("music/game_bgm.mp3")  # Replace with the path to your background music file
+start_screen_bgm = pygame.mixer.Sound("music/starting_bgm.mp3")
 
-pygame.mixer.music.play(-1)  # -1 means to play the music indefinitely
 
 
 
@@ -62,6 +61,8 @@ class Tank(pygame.sprite.Sprite):
         all_sprites.add(bullet)
         bullets.add(bullet)
         bullet_sound.play()
+        pygame.mixer.Channel(0).play(bullet_sound, maxtime=600)
+        
 
 # Bullet class
 class Bullet(pygame.sprite.Sprite):
@@ -98,8 +99,7 @@ class Enemy(pygame.sprite.Sprite):
 def decrease_health():
     global health
     health -= 10
-    if health <= 0:
-        game_over()
+
 
 def game_over():
     global game_over_screen
@@ -206,7 +206,9 @@ text_font = pygame.font.SysFont(None, 40)  # Define font for score and level tex
 
 while running:
     if start_screen:
+  # -1 means to play the music indefinitely
         show_start_screen()
+        start_screen_bgm.play(-1)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -218,6 +220,7 @@ while running:
                     running = False
 
     elif game_over_screen:
+        
         show_game_over_screen()
 
         for event in pygame.event.get():
@@ -262,6 +265,11 @@ while running:
                     running = False
 
     else:
+        start_screen_bgm.stop()
+        game_background_music.play(-1)
+        
+
+
         if len(enemies) < level + enemy_spawn_rate:
             enemy = Enemy()
             all_sprites.add(enemy)
@@ -289,8 +297,8 @@ while running:
                 enemy_speed += 0.3
             if score >= 100*level and level >= 15 and level < 25:
                 level += 1
-                # enemy_spawn_rate +=1
-                enemy_speed += 0.5
+                enemy_spawn_rate +=1
+                enemy_speed += 0.5 
             if level==25:
                 game_complete()
 
@@ -310,11 +318,15 @@ while running:
         window.blit(level_text, (WIDTH - 120, HEIGHT - 50))
 
         pygame.display.flip()
+        if health <= 0:
+            
+            game_over()
 
         if len(enemies) == 0:
             level += 1
             enemy_spawn_rate += 1
             enemy_speed += 0.2
+
 
     clock.tick(60)
 
