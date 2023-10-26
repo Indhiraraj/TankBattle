@@ -33,6 +33,8 @@ enemy_image = pygame.transform.scale(enemy_image, (60, 60))
 
 # Load sounds
 bullet_sound = pygame.mixer.Sound("music/bullet.mp3")
+game_background_music = pygame.mixer.Sound("music/game_bgm.mp3")  # Replace with the path to your background music file
+start_screen_bgm = pygame.mixer.Sound("music/starting_bgm.mp3")
 
 # Tank class
 class Tank(pygame.sprite.Sprite):
