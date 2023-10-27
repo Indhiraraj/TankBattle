@@ -263,6 +263,7 @@ text_font = pygame.font.SysFont(None, 40)  # Define font for score and level tex
 while running:
     if start_screen:
         show_start_screen()
+        start_screen_bgm.play(-1)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -324,6 +325,8 @@ while running:
                     running = False
 
     else:
+        start_screen_bgm.stop()
+        game_background_music.play(-1)
         if len(enemies) < level + enemy_spawn_rate:
             enemy = Enemy()
             all_sprites.add(enemy)
