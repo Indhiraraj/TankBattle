@@ -60,7 +60,7 @@ class Tank(pygame.sprite.Sprite):
         bullet = Bullet(self.rect.centerx, self.rect.y)
         all_sprites.add(bullet)
         bullets.add(bullet)
-        bullet_sound.play()
+        pygame.mixer.Channel(0).play(bullet_sound, maxtime=600)
 
 # tank2 class
 class Tank2(pygame.sprite.Sprite):
@@ -85,7 +85,7 @@ class Tank2(pygame.sprite.Sprite):
         bullet = Bullet(self.rect.centerx, self.rect.y)
         all_sprites.add(bullet)
         bullets.add(bullet)
-        bullet_sound.play()
+        pygame.mixer.Channel(0).play(bullet_sound, maxtime=600)
 
 # Bullet class
 class Bullet(pygame.sprite.Sprite):
@@ -122,27 +122,16 @@ class Enemy(pygame.sprite.Sprite):
 def decrease_health():
     global health1
     global health2
-    health1 -= 3
-    health2 -= 3
-    is_game_over()
+    health1 -= 5
+    health2 -= 5
 
 def decrease_health1():
     global health1
     health1 -= 10
-    if health1 <= 0:
-        is_game_over()
 
 def decrease_health2():
     global health2
     health2 -= 10
-    if health2 <= 0:
-        is_game_over()
-
-def is_game_over():
-    global health1
-    global health2
-    if health1 <= 0 and health2 <=0:
-        game_over()
       
 def game_over():
     global game_over_screen
@@ -383,7 +372,12 @@ while running:
         window.blit(level_text, (WIDTH - 120, HEIGHT - 50))
 
         pygame.display.flip()
-
+        if health1 <=0 :
+            player_tank.kill()
+        if health2 <= 0:
+            player_tank2.kill()
+        if health1 <= 0 and health2 <=0:
+            game_over()
         if len(enemies) == 0:
             level += 1
             enemy_spawn_rate += 1
